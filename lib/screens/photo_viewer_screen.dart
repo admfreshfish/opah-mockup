@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../models/person.dart';
 import '../models/photo.dart';
@@ -57,7 +58,22 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
-        title: const Text('Photo'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Photo'),
+            if (widget.photo.takenAt != null)
+              Text(
+                DateFormat('MMM d, y · HH:mm').format(widget.photo.takenAt!),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.white70,
+                ),
+              ),
+          ],
+        ),
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -95,7 +111,11 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen> {
                       top: imageRect.top + imageRect.height * top,
                       width: imageRect.width * width,
                       height: imageRect.height * height,
-                      child: const _FaceOverlay(),
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => Navigator.of(context).pop(region.personId),
+                        child: const _FaceOverlay(),
+                      ),
                     );
                   }),
                 ],

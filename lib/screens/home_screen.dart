@@ -8,6 +8,7 @@ import '../models/event.dart';
 import 'create_event_screen.dart';
 import 'event_detail_screen.dart';
 import 'profile_screen.dart';
+import 'scan_join_event_screen.dart';
 
 String _formatSchedule(DateTime dt) {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -58,7 +59,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ...mockEvents.where((e) => e.isOwner),
       ..._createdEvents,
     ];
-    final invitedEvents = mockEvents.where((e) => !e.isOwner).toList();
+    final invitedEvents = mockEvents
+        .where((e) =>
+            !e.isOwner &&
+            (e.invitedUserIds.contains(currentUserId) || hasUserJoinedEvent(e.id)))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -152,11 +157,33 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _createEvent(context),
-        foregroundColor: Colors.black,
-        icon: const Icon(Icons.add),
-        label: const Text('New event'),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(right: 16, bottom: 16),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton.extended(
+              heroTag: 'join-by-qr-fab',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) => const ScanJoinEventScreen(),
+                ),
+              ),
+              foregroundColor: Colors.black,
+              icon: const Icon(Icons.qr_code_scanner),
+              label: const Text('Join by QR'),
+            ),
+            const SizedBox(width: 12),
+            FloatingActionButton.extended(
+              heroTag: 'new-event-fab',
+              onPressed: () => _createEvent(context),
+              foregroundColor: Colors.black,
+              icon: const Icon(Icons.add),
+              label: const Text('New event'),
+            ),
+          ],
+        ),
       ),
     );
   }

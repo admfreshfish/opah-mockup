@@ -47,5 +47,7 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Opah needs access to your photos to set an event cover image.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Opah uses the camera to scan event QR codes so you can join events.</string>
 </dict>
 </plist>
